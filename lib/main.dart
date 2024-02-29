@@ -14,10 +14,15 @@ class NotesApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
       theme: ThemeData(
-        appBarTheme: AppBarTheme(systemOverlayStyle: SystemUiOverlayStyle()),
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        brightness: Brightness.dark,
+        appBarTheme: const AppBarTheme(
+          color: Colors.transparent,
+          elevation: 0,
+            systemOverlayStyle: SystemUiOverlayStyle(
+          systemNavigationBarDividerColor: Colors.transparent
+        )
+        ),
       ),
       initialRoute: HomeScreen.id,
       routes: {
