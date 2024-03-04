@@ -1,69 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_app/constants/constants.dart';
+import 'package:notes_app/cubits/add_note_cubit/note_cubit/cubit.dart';
+import 'package:notes_app/cubits/add_note_cubit/note_cubit/states.dart';
+import 'package:notes_app/models/note_model.dart';
+import 'package:notes_app/screens/add_notes_screen.dart';
+import 'package:notes_app/widgets/build_item.dart';
 
-class NotesListView extends StatelessWidget {
+class NotesListView extends StatefulWidget {
   const NotesListView({
     super.key,
   });
 
   @override
+  State<NotesListView> createState() => _NotesListViewState();
+}
+
+class _NotesListViewState extends State<NotesListView> {
+  var controller = ScrollController();
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            padding: const EdgeInsets.only(bottom: 24, left: 24, top: 24),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(
-                0.4,
-              ),
-              borderRadius: BorderRadius.circular(
-                16,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                ListTile(
-                  title: const Text(
-                    'Flutter',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: const Padding(
-                    padding: EdgeInsets.only(top:  12.0),
-                    child: Text(
-                      'datasaddaiflsjksfjlkdsnlkndljdkfsaaaaaaaaaaaaaaaaaaaaaaasadrereayhfknibjnfvindsnjnkjnkjsaniu',
+    return BlocBuilder<NotesCubit, NotesStates>(
+      builder: (context, state) {
+        List<NoteModel> notes =
+            BlocProvider.of<NotesCubit>(context).notes ?? [];
+        return notes.isEmpty
+            ? Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'No notes yet',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 20,
                       ),
                     ),
-                  ),
-                  trailing: IconButton(
-                    splashRadius: 24,
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      size: 28,
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, AddNotesScreen.id);
+                      },
+                      child: const Text(
+                        'Add some!',
+                        style: TextStyle(
+                          color: customColor,
+                          fontSize: 20,
+                        ),
+                      ),
                     ),
+                  ],
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.only(
+                  top: 16,
+                  right: 16,
+                  left: 16,
+                  bottom: 36,
+                ),
+                child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: ListView.builder(
+                    reverse: false,
+                    controller: controller,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: notes.length,
+                    itemBuilder: (context, index) {
+                      return BuildNoteItem(
+                        noteModel: notes.reversed.toList()[index],
+                      );
+                    },
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(
-                    top: 12,
-                    right: 24.0,
-                  ),
-                  child: Text('12/2/2'),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+              );
+      },
     );
   }
 }
